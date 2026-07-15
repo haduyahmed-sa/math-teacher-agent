@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { AuthProvider } from "@/lib/auth/auth-context";
+import ProtectedRoute from "@/components/auth/protected-route";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -29,7 +31,9 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-50">
-        {children}
+        <AuthProvider>
+          <ProtectedRoute>{children}</ProtectedRoute>
+        </AuthProvider>
       </body>
     </html>
   );
