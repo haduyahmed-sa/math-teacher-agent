@@ -30,11 +30,25 @@ export default function RootLayout({
       dir="rtl"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-50">
-        <AuthProvider>
-          <ProtectedRoute>{children}</ProtectedRoute>
-        </AuthProvider>
-      </body>
+      <body  className="min-h-full bg-slate-50 text-slate-900 dark...">
+  <AuthProvider>
+    <div className="min-h-screen flex flex-col">
+      <main className="flex-1">
+        <ProtectedRoute>{children}</ProtectedRoute>
+      </main>
+
+      <footer
+        dir="rtl"
+        className="w-full py-5 px-4 text-center text-sm text-slate-500 border-t border-slate-200"
+      >
+        <p>Math Teacher AI © ٢٠٢٦</p>
+        <p className="mt-1">
+          تطوير وتصميم عبدالهادي الحجي — جميع الحقوق محفوظة
+        </p>
+      </footer>
+    </div>
+  </AuthProvider>
+</body>
     </html>
   );
 }
