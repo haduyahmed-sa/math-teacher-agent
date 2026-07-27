@@ -1,12 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import AuthShell from "@/components/auth/auth-shell";
 import { useAuth } from "@/lib/auth/auth-context";
 
 export default function RegisterPage() {
-  const router = useRouter();
   const { register } = useAuth();
   const [form, setForm] = useState({
     fullName: "",
@@ -18,15 +16,43 @@ export default function RegisterPage() {
     school: "",
   });
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setError(null);
+    setSuccess(null);
+
+    if (!form.fullName.trim()) {
+      setError("يرجى إدخال الاسم الكامل.");
+      return;
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
+      setError("يرجى إدخال بريد إلكتروني صالح.");
+      return;
+    }
+
+    if (form.password.length < 8) {
+      setError("يجب أن تكون كلمة المرور 8 أحرف على الأقل.");
+      return;
+    }
+
+    if (form.password !== form.confirmPassword) {
+      setError("كلمتا المرور غير متطابقتين.");
+      return;
+    }
+
+    if (!form.specialty.trim() || !form.schoolLevel.trim() || !form.school.trim()) {
+      setError("يرجى إكمال جميع الحقول الإضافية.");
+      return;
+    }
+
     setLoading(true);
 
     try {
-      await register({
+      const result = await register({
         fullName: form.fullName,
         email: form.email,
         password: form.password,
@@ -35,7 +61,10 @@ export default function RegisterPage() {
         schoolLevel: form.schoolLevel,
         school: form.school,
       });
-      router.replace("/dashboard");
+
+      if (result.needsConfirmation) {
+        setSuccess("تم إنشاء الحساب بنجاح. يرجى التحقق من البريد الإلكتروني وتأكيد الحساب قبل تسجيل الدخول.");
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "تعذر إنشاء الحساب.");
     } finally {
@@ -134,6 +163,7 @@ export default function RegisterPage() {
         </div>
 
         {error ? <p className="rounded-2xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700">{error}</p> : null}
+        {success ? <p className="rounded-2xl border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-700">{success}</p> : null}
 
         <button
           type="submit"

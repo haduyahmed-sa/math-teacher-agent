@@ -1,7 +1,18 @@
+import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 import AppShell from "@/components/app-shell/app-shell";
+import { createClient } from "@/utils/supabase/server";
 import type { ReactNode } from "react";
 
-export default function AppLayout({ children }: { children: ReactNode }) {
+export default async function AppLayout({ children }: { children: ReactNode }) {
+  const cookieStore = await cookies();
+  const supabase = await createClient(cookieStore);
+  const { data: { user }, error } = await supabase.auth.getUser();
+
+  if (error || !user) {
+    redirect("/login");
+  }
+
   return (
     <AppShell
       title="مرحبًا عبدالهادي 👋"

@@ -1,32 +1,21 @@
-"use client";
-
-import { useState } from "react";
 import Link from "next/link";
-import { useAuth } from "@/lib/auth/auth-context";
+import { cookies } from "next/headers";
+import { LogoutButton } from "@/components/auth/logout-button";
+import { createClient } from "@/utils/supabase/server";
 
-export default function ProfilePage() {
-  const { user, logoutUser, updateUser } = useAuth();
-  const [editing, setEditing] = useState(false);
-  const [form, setForm] = useState({
-    fullName: user?.fullName ?? "",
-    specialty: user?.specialty ?? "",
-    schoolLevel: user?.schoolLevel ?? "",
-    school: user?.school ?? "",
-  });
+export default async function ProfilePage() {
+  const cookieStore = await cookies();
+  const supabase = await createClient(cookieStore);
+  const { data: { user }, error } = await supabase.auth.getUser();
 
-  if (!user) {
+  if (error || !user) {
     return null;
   }
 
-  const handleSave = async () => {
-    await updateUser({
-      fullName: form.fullName,
-      specialty: form.specialty,
-      schoolLevel: form.schoolLevel,
-      school: form.school,
-    });
-    setEditing(false);
-  };
+  const fullName = (user.user_metadata?.full_name as string) || (user.user_metadata?.name as string) || user.email || "مستخدم";
+  const specialty = (user.user_metadata?.specialty as string) || "غير محدد";
+  const schoolLevel = (user.user_metadata?.school_level as string) || "غير محدد";
+  const school = (user.user_metadata?.school as string) || "غير محدد";
 
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top_right,_rgba(124,58,237,0.12),_transparent_30%),radial-gradient(circle_at_bottom_left,_rgba(59,130,246,0.10),_transparent_25%)] px-4 py-6 text-slate-900 sm:px-6 lg:px-8">
@@ -37,88 +26,31 @@ export default function ProfilePage() {
             <h1 className="mt-2 text-2xl font-semibold text-slate-950">معلومات الحساب</h1>
           </div>
           <div className="flex gap-3">
-            <button
-              type="button"
-              onClick={() => setEditing((value) => !value)}
-              className="rounded-full bg-slate-950 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800"
-            >
-              {editing ? "إلغاء" : "تعديل البيانات"}
-            </button>
-            <button
-              type="button"
-              onClick={() => logoutUser()}
-              className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
-            >
-              تسجيل الخروج
-            </button>
+            <Link href="/dashboard" className="rounded-full bg-slate-950 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800">
+              العودة إلى لوحة التحكم
+            </Link>
+            <LogoutButton />
           </div>
         </div>
 
         <div className="mt-8 grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
           <div className="rounded-[1.6rem] border border-slate-200 bg-slate-50 p-6">
-            <img
-              src={user.avatarUrl ?? "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=240&q=80"}
-              alt={user.fullName}
-              className="h-32 w-32 rounded-full object-cover"
-            />
-            <h2 className="mt-5 text-xl font-semibold text-slate-950">{user.fullName}</h2>
+            <div className="flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-sky-500 text-2xl font-semibold text-white">
+              {fullName.charAt(0)}
+            </div>
+            <h2 className="mt-5 text-xl font-semibold text-slate-950">{fullName}</h2>
             <p className="mt-2 text-sm leading-7 text-slate-600">{user.email}</p>
             <div className="mt-4 space-y-2 text-sm text-slate-600">
-              <p>المدرسة: {user.school}</p>
-              <p>التخصص: {user.specialty}</p>
-              <p>المرحلة: {user.schoolLevel}</p>
+              <p>المدرسة: {school}</p>
+              <p>التخصص: {specialty}</p>
+              <p>المرحلة: {schoolLevel}</p>
             </div>
           </div>
 
           <div className="rounded-[1.6rem] border border-slate-200 bg-white p-6">
-            {editing ? (
-              <div className="space-y-4">
-                <label className="flex flex-col gap-2 text-sm font-medium text-slate-700">
-                  <span>الاسم</span>
-                  <input
-                    value={form.fullName}
-                    onChange={(event) => setForm((prev) => ({ ...prev, fullName: event.target.value }))}
-                    className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none transition focus:border-violet-400 focus:bg-white"
-                  />
-                </label>
-                <label className="flex flex-col gap-2 text-sm font-medium text-slate-700">
-                  <span>التخصص</span>
-                  <input
-                    value={form.specialty}
-                    onChange={(event) => setForm((prev) => ({ ...prev, specialty: event.target.value }))}
-                    className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none transition focus:border-violet-400 focus:bg-white"
-                  />
-                </label>
-                <label className="flex flex-col gap-2 text-sm font-medium text-slate-700">
-                  <span>المرحلة</span>
-                  <input
-                    value={form.schoolLevel}
-                    onChange={(event) => setForm((prev) => ({ ...prev, schoolLevel: event.target.value }))}
-                    className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none transition focus:border-violet-400 focus:bg-white"
-                  />
-                </label>
-                <label className="flex flex-col gap-2 text-sm font-medium text-slate-700">
-                  <span>المدرسة</span>
-                  <input
-                    value={form.school}
-                    onChange={(event) => setForm((prev) => ({ ...prev, school: event.target.value }))}
-                    className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none transition focus:border-violet-400 focus:bg-white"
-                  />
-                </label>
-                <button
-                  type="button"
-                  onClick={handleSave}
-                  className="rounded-full bg-slate-950 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800"
-                >
-                  حفظ التعديلات
-                </button>
-              </div>
-            ) : (
-              <div className="space-y-3 text-sm leading-8 text-slate-600">
-                <p>يمكنك تعديل بيانات الحساب في أي وقت من خلال زر تعديل البيانات.</p>
-                <Link href="/dashboard" className="inline-flex items-center rounded-full bg-violet-100 px-4 py-2 font-semibold text-violet-700">العودة إلى لوحة التحكم</Link>
-              </div>
-            )}
+            <p className="text-sm leading-8 text-slate-600">
+              يتم عرض بيانات الحساب مباشرة من حساب Supabase الخاص بك. سيتم إضافة أدوات تعديل إضافية لاحقًا عند الحاجة.
+            </p>
           </div>
         </div>
       </div>

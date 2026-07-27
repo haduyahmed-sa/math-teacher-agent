@@ -8,13 +8,29 @@ import { useAuth } from "@/lib/auth/auth-context";
 export default function LoginPage() {
   const router = useRouter();
   const { login } = useAuth();
-  const [form, setForm] = useState({ email: "teacher@example.com", password: "password", rememberMe: true });
+  const [form, setForm] = useState({ email: "", password: "", rememberMe: true });
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setError(null);
+
+    if (!form.email.trim()) {
+      setError("يرجى إدخال البريد الإلكتروني.");
+      return;
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
+      setError("يرجى إدخال بريد إلكتروني صالح.");
+      return;
+    }
+
+    if (!form.password.trim()) {
+      setError("يرجى إدخال كلمة المرور.");
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -30,7 +46,7 @@ export default function LoginPage() {
   return (
     <AuthShell
       title="تسجيل الدخول"
-      subtitle="مرحبًا بك مرة أخرى. استخدم حسابك للوصول إلى لوحة التحكم والأدوات التعليمية المتاحة."      
+      subtitle="مرحبًا بك مرة أخرى. استخدم حسابك للوصول إلى لوحة التحكم والأدوات التعليمية المتاحة."
       footerText="ليس لديك حساب؟"
       footerHref="/register"
       footerLinkLabel="إنشاء حساب جديد"
