@@ -21,7 +21,12 @@ export default function Header({ title, subtitle, collapsed, onToggle }: HeaderP
         </button>
         <div>
           <p className="text-sm font-medium text-slate-500">لوحة التحكم</p>
-          <h1 className="mt-1 text-2xl font-semibold text-slate-950">{title}</h1>
+          <div className="mt-1 flex flex-wrap items-center gap-2">
+  <h1 className="text-2xl font-semibold text-slate-950">{title}</h1>
+  <span className="rounded-full border border-amber-300 bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-700">
+    نسخة تجريبية
+  </span>
+</div>
           <p className="mt-2 text-sm leading-7 text-slate-600">{subtitle}</p>
         </div>
       </div>
