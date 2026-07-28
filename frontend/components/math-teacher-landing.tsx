@@ -34,17 +34,23 @@ export default function MathTeacherLanding() {
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-violet-600 to-sky-500 text-lg font-semibold text-white">
               ∑
             </div>
-            <div>
-              <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">
-                Math Teacher AI
-              </p>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
-                مساعد ذكي للتدريس
-              </p>
-            </div>
-          </div>
+<div>
+  <div className="flex items-center gap-2">
+    <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">
+      Math Teacher AI
+    </p>
+    <span className="rounded-full border border-amber-300 bg-amber-50 px-2 py-0.5 text-[10px] font-semibold text-amber-700">
+      نسخة تجريبية
+    </span>
+  </div>
+
+  <p className="text-xs text-slate-500 dark:text-slate-400">
+    مساعد ذكي للمدرس
+  </p>
+</div>
           <div className="rounded-full border border-violet-200 bg-violet-50 px-3 py-1 text-sm font-medium text-violet-700 dark:border-violet-900/60 dark:bg-violet-950/40 dark:text-violet-300">
-            AI for educators
+            نسخة تجريبية
+          </div>
           </div>
         </header>
 
