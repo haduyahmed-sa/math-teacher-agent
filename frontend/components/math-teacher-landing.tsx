@@ -48,9 +48,7 @@ export default function MathTeacherLanding() {
     مساعد ذكي للمدرس
   </p>
 </div>
-          <div className="rounded-full border border-violet-200 bg-violet-50 px-3 py-1 text-sm font-medium text-violet-700 dark:border-violet-900/60 dark:bg-violet-950/40 dark:text-violet-300">
-            نسخة تجريبية
-          </div>
+         
           </div>
         </header>
 
