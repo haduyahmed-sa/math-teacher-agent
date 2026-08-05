@@ -15,7 +15,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
 
   return (
     <AppShell
-      title="مرحبًا عبدالهادي 👋"
+      title="مرحبًا بك 👋"
       subtitle="إليك نظرة سريعة على نشاطك اليوم ومحتواك الجاهز للتطوير."
     >
       {children}

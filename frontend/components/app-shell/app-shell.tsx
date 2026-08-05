@@ -4,6 +4,7 @@ import { useMemo, useState, type ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import Header from "@/components/dashboard/header";
 import Sidebar from "@/components/dashboard/sidebar";
+import { useAuth } from "@/lib/auth/auth-context";
 
 type AppShellProps = {
   title: string;
@@ -71,12 +72,22 @@ const routeContent = [
 
 export default function AppShell({ title, subtitle, children }: AppShellProps) {
   const pathname = usePathname();
+  const { user, loading } = useAuth();
   const [collapsed, setCollapsed] = useState(false);
 
   const resolvedContent = useMemo(() => {
     const match = routeContent.find((item) => item.pattern.test(pathname));
+
+    if (match && /^\/dashboard\/?$/.test(pathname)) {
+      const displayName = user?.fullName?.trim();
+      return {
+        title: loading ? "مرحبًا بك 👋" : displayName ? `مرحبًا ${displayName} 👋` : "مرحبًا بك 👋",
+        subtitle: match.subtitle,
+      };
+    }
+
     return match ? { title: match.title, subtitle: match.subtitle } : { title, subtitle };
-  }, [pathname, title, subtitle]);
+  }, [loading, pathname, title, subtitle, user?.fullName]);
 
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top_right,_rgba(124,58,237,0.12),_transparent_30%),radial-gradient(circle_at_bottom_left,_rgba(59,130,246,0.10),_transparent_25%)] px-4 py-4 text-slate-900 sm:px-6 lg:px-8 lg:py-6">
